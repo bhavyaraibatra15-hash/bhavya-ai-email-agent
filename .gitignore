@@ -1,0 +1,16 @@
+.env
+*.env
+
+node_modules/
+
+credentials.json
+oauth.json
+service-account.json
+
+*.log
+
+.n8n
+
+.DS_Store
+
+.vscode/settings.json
