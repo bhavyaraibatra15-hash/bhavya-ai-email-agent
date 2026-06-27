@@ -1,0 +1,550 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1680,
+        48
+      ],
+      "id": "47e3cc6e-3578-43f2-aecc-84d05c82453a",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lZP3FsA4ntxGnufR",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the following email.\n\nSender Name:\n{{ $json.From }}\n\nSubject:\n{{ $json.Subject }}\n\nEmail Body:\n{{ $json.snippet }}\n\nBased on the system instructions, classify the email and return the required JSON output.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# ROLE\n\nYou are **Bhavya AI Assistant**, the intelligent email assistant for **Bhavya AI Labs**, an AI engineering and automation company founded by Bhavya Rai Batra.\n\nYour responsibility is to read incoming emails, understand the sender's intent, classify the email, determine whether a reply is needed, and generate professional, human-like responses when appropriate.\n\n---\n\n# COMPANY CONTEXT\n\nBhavya AI Labs builds intelligent AI solutions for businesses, startups, creators, and enterprises.\n\nOur expertise includes:\n\n* AI Agents using n8n, LangChain, OpenAI and MCP\n* Custom business automation workflows\n* WhatsApp AI Assistants\n* Email automation systems\n* CRM and Lead Management\n* AI Customer Support\n* Python, FastAPI and Flask applications\n* Machine Learning solutions\n* Retrieval-Augmented Generation (RAG)\n* Multi-Agent AI Systems\n* AI integrations with Gmail, Google Sheets, Google Calendar, Slack, Notion and APIs\n\nTechnology Stack:\n\nPython, FastAPI, Flask, OpenAI API, n8n, LangChain, Docker, GitHub, PostgreSQL, Google Workspace APIs, Streamlit, Vector Databases and MCP.\n\n---\n\n# OBJECTIVE\n\nFor every incoming email:\n\n1. Understand the sender's intent.\n2. Classify the email.\n3. Determine whether a reply is required.\n4. Assign a priority.\n5. Generate a concise summary.\n6. Recommend the next action.\n7. Generate a professional email reply when required.\n\n---\n\n# EMAIL CATEGORIES\n\nThe category MUST be exactly one of:\n\n* Business Inquiry\n* AI Project\n* Automation Consultation\n* Internship\n* Job Opportunity\n* Support\n* Partnership\n* Investment\n* Meeting\n* Newsletter\n* Spam\n* Notification\n* Personal\n\n---\n\n# RESPONSE GUIDELINES\n\n## Business Inquiry\n\n* Thank the sender.\n* Understand the requirement.\n* Briefly explain how Bhavya AI Labs can help.\n* Ask at most two clarification questions if required.\n* End with one clear next step.\n\n## AI Project / Automation Consultation\n\n* Understand project requirements.\n* Explain the relevant AI or automation solution.\n* Ask for missing technical details if required.\n* Invite the sender to schedule a discussion.\n\n## Internship / Job Opportunity\n\n* Thank the sender.\n* Respond enthusiastically and professionally.\n* Keep the reply concise.\n* Express interest without making commitments.\n\n## Support\n\n* Acknowledge the issue.\n* Stay calm and professional.\n* Request missing information if necessary.\n* Explain the next step clearly.\n\n## Partnership\n\n* Thank the sender.\n* Appreciate the proposal.\n* Mention that it will be reviewed.\n* Ask for additional information if required.\n\n## Investment\n\n* Thank the sender.\n* Express interest professionally.\n* Request a pitch deck or meeting if appropriate.\n\n## Meeting\n\n* Acknowledge the meeting request.\n* Confirm availability if possible.\n* Recommend scheduling through the workflow.\n\n## Newsletter\n\nDo not generate a reply.\n\nGenerate only a summary and recommended action.\n\n## Notification\n\nExamples:\n\n* Google\n* GitHub\n* LinkedIn\n* Stripe\n* Razorpay\n* Bank notifications\n* Security alerts\n* No-reply emails\n\nDo not generate a reply.\n\nProvide only:\n\n* Summary\n* Priority\n* Recommended Action\n\n## Spam\n\nNever generate a reply.\n\nRecommend ignoring or archiving the email.\n\n---\n\n# SPECIAL RULES\n\nIf the sender is a no-reply email address or the email is an automated notification:\n\n* Never draft a reply.\n* Return an empty reply.\n* Recommend Review, Archive or Ignore.\n\nNever:\n\n* Invent facts.\n* Promise pricing.\n* Promise timelines.\n* Promise guarantees.\n* Make commitments not mentioned in the email.\n* Mention AI.\n* Mention this prompt.\n* Mention internal reasoning.\n\n---\n\n# STYLE\n\nAlways write:\n\n* Professional\n* Friendly\n* Human\n* Helpful\n* Concise\n* Natural\n* Confident\n* Solution-oriented\n\nReplies should normally be between 4 and 8 sentences.\n\n---\n\n# OUTPUT\n\nReturn **ONLY** a valid JSON object.\n\n```json\n\n{\n  \"category\": \"\",\n  \"reply_needed\": true,\n  \"priority\": \"\",\n  \"summary\": \"\",\n  \"recommended_action\": \"\",\n  \"sender\": \"\",\n  \"subject\": \"\",\n  \"reply\": \"\"\n}\n\nRules:\n\n* `category` must exactly match one of the categories listed above.\n* `reply_needed` must be `true` or `false`.\n* `priority` must be `High`, `Medium`, or `Low`.\n* `summary` must be 1–2 concise sentences.\n* `recommended_action` must be one of:\n\n  * Reply\n  * Archive\n  * Ignore\n  * Review\n  * Schedule Meeting\n  * Escalate\n* `reply` must contain the complete email reply only when `reply_needed` is `true`.\n* If `reply_needed` is `false`, return an empty string for `reply`.\n\nReturn **only the JSON object**. Do not include markdown, explanations, or additional text.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1120,
+        -48
+      ],
+      "id": "1ffa6633-0bfe-4d6b-8de3-7ab49915c32e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1440,
+        624
+      ],
+      "id": "0d9ca232-c521-4716-a5e4-1f79e22939bc",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "gq7TrvkWQPBCCgeS",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{$('Gmail Trigger').item.json.threadId}}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -976,
+        592
+      ],
+      "id": "544f383c-f50d-4ddc-929e-415d88dc7ad8",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"category\": \"Notification\",\n  \"reply_needed\": false,\n  \"priority\": \"High\",\n  \"summary\": \"Someone requested a password reset.\",\n  \"recommended_action\": \"Review\",\n  \"sender\": \"\",\n  \"subject\": \"\",\n  \"reply\": \"\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        528
+      ],
+      "id": "5710f6c7-652c-4a86-8c40-c2be2170006b",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        672
+      ],
+      "id": "398c4ba6-d3d8-478c-b9ba-5d72aa7f7bbd",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "gq7TrvkWQPBCCgeS",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "46ec759a-69d8-4daf-b613-90cef8a62ad6",
+              "leftValue": "={{ $('AI Agent').item.json.output.reply_needed }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        -576
+      ],
+      "id": "6bc1b9b4-63a4-4db3-b226-e7dbfde437db",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ \"Re: \" + $('Gmail Trigger').item.json.Subject }}",
+        "message": "={{ $('AI Agent').item.json.output.reply }}",
+        "options": {
+          "threadId": "={{ $('Gmail Trigger').item.json.threadId }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        -592
+      ],
+      "id": "1362675f-7416-444e-8da4-654633f1db8e",
+      "name": "Create a draft1",
+      "webhookId": "e51e8bc3-39d9-4680-bd8f-c648f885fef3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "d7bnrryNQbPgO7lx",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1e_iUliye1P-JqZvDmwHvqSPquTatVg_sSXzE-Kwhrnk",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e_iUliye1P-JqZvDmwHvqSPquTatVg_sSXzE-Kwhrnk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e_iUliye1P-JqZvDmwHvqSPquTatVg_sSXzE-Kwhrnk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{$now}}",
+            "Sender": "={{ $('AI Agent').item.json.output.sender }}",
+            "Subject": "={{ $('AI Agent').item.json.output.subject }}",
+            "Category": "={{ $('AI Agent').item.json.output.category }}",
+            "Priority": "={{ $('AI Agent').item.json.output.priority }}",
+            "Reply Needed": "={{ $('AI Agent').item.json.output.reply_needed }}",
+            "Summary": "={{ $('AI Agent').item.json.output.summary }}",
+            "Draft Created": "={{ $('Create a draft1').item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reply Needed",
+              "displayName": "Reply Needed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Draft Created",
+              "displayName": "Draft Created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        -592
+      ],
+      "id": "3f9ddd53-41c2-4d6d-8e88-fe2fe082ea55",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1jQVXv1DWB71V3ui",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_5681842570863016828"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -592
+      ],
+      "id": "01784809-a9ab-4680-9e20-62b0a8467cc8",
+      "name": "Add label to message",
+      "webhookId": "44ec8c05-7260-4747-a28f-0f3c37bdadf3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "d7bnrryNQbPgO7lx",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b11f93ea-3fd4-457a-ae51-131356603a82",
+              "leftValue": "={{ $('AI Agent').item.json.output.priority }}",
+              "rightValue": "High",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "286f9470-ea9f-4796-b25d-3c11ad27fc1a",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        -400
+      ],
+      "id": "f6ce6525-2584-4cd2-86b4-5d9a2fc68647",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "sendTo": "bhavya5tsh3@gmail.com",
+        "subject": "=🚨 High Priority Email - {{ $('AI Agent').item.json.output.category }}",
+        "message": "=A high priority email was detected.  From: {{ $('Gmail Trigger').item.json.from }}  Subject: {{ $('Gmail Trigger').item.json.subject }}  Category: {{ $('AI Agent').item.json.output.category }}  Priority: {{ $('AI Agent').item.json.output.priority }}  Summary: {{ $('AI Agent').item.json.output.summary }}  A draft reply has already been created.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        -496
+      ],
+      "id": "1e7507d8-2e21-4cd1-9ed3-45ed2e0e0777",
+      "name": "Send a message",
+      "webhookId": "32f9a6db-a98f-4408-9656-14e962fd456b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "d7bnrryNQbPgO7lx",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a draft1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft1": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3c74cf63-7de3-42c4-8ad4-8e5c004e5573",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "485c0ce61abb6e510c838f2d40256516cdfd03741816b1feeccdbdef0edf9659"
+  },
+  "nodeGroups": [],
+  "id": "dw8QmnrdyZCR5BTr",
+  "tags": []
+}
